@@ -37,11 +37,6 @@ public class ObjectManager : MonoBehaviour
                     gridController.myObject = this;
                 }
             }
-
-            if (myPosition == null)
-            {
-                return;
-            }
         }
     }
 }
