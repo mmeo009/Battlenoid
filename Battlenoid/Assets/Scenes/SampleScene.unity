@@ -40114,10 +40114,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetPoint: {fileID: 0}
   playerPoint: {fileID: 0}
-  movableLeft: {fileID: 0}
-  movableRight: {fileID: 0}
-  movableFront: {fileID: 0}
-  movableBack: {fileID: 0}
   player: {fileID: 0}
   x: 0
   y: 0
@@ -50640,9 +50636,9 @@ MeshFilter:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1771918323}
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1448375661}
   - {fileID: 150073723}
-  - {fileID: 1771918323}

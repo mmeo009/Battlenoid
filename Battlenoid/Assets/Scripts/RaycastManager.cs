@@ -5,7 +5,7 @@ using UnityEngine;
 public class RaycastManager : MonoBehaviour
 {
     public GridController targetPoint, playerPoint;
-    public GridController movableLeft, movableRight, movableFront, movableBack;
+    public Dictionary<string, GridController> movableGrids = new Dictionary<string, GridController>();
 
     public PlayerController player;
     public int x, y, z;
@@ -65,10 +65,10 @@ public class RaycastManager : MonoBehaviour
         float stoppingDistance = 0.01f;
 
         playerPoint.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
-        movableBack.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
-        movableFront.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
-        movableLeft.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
-        movableRight.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
+        foreach(GridController movable in movableGrids.Values)
+        {
+            movable.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
+        }
         StartCoroutine(MoveToDestination(destination, speed, stoppingDistance));
     }
 
@@ -85,47 +85,59 @@ public class RaycastManager : MonoBehaviour
 
         targetPoint.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Red");
 
-        player.GetComponent<ObjectManager>().GetMyPosition(0);
-
+        player.GetComponent<ObjectManager>().GetMyPosition();
+        movableGrids.Clear();
         targetPoint = null;
         playerPoint = null;
         player = null;
-        movableBack = null;
-        movableFront = null;
-        movableLeft = null;
-        movableRight = null;
+
     }
 
 
     public void FindMovableGrids(GridController grid)
     {
-        SetMovableGrid(grid, 0, 1, ref movableLeft);
-        SetMovableGrid(grid, 0, -1, ref movableRight);
-        SetMovableGrid(grid, -1, 0, ref movableFront);
-        SetMovableGrid(grid, 1, 0, ref movableBack);
+        SetMovableGrid(grid, 0, 1, 1, "left");
+        SetMovableGrid(grid, 0, -1, 1, "right");
+        SetMovableGrid(grid, -1, 0, 1, "front");
+        SetMovableGrid(grid, 1, 0, 1, "back");
+        SetMovableGrid(grid, 1, 1, 2, "diagonalLB");
+        SetMovableGrid(grid, 1, -1, 2, "diagonalRB");
+        SetMovableGrid(grid, -1, 1, 2, "diagonalLF");
+        SetMovableGrid(grid, -1, -1, 2, "diagonalRF");
     }
 
-    private void SetMovableGrid(GridController grid, int xOffset, int zOffset, ref GridController movableGrid)
+    private void SetMovableGrid(GridController grid, int xOffset, int zOffset, int distance, string destination)
     {
         string key = $"{grid.x + xOffset}, {grid.z + zOffset}";
         GridController targetGrid = GridManager.Instance.gridDictionary[key];
 
+        string movableKey = $"{destination}, {distance}";
+
         if (targetGrid != null && (targetGrid.myObject == null || targetGrid.myObject.myData.myType != ObjectTypeData.Type.OBSTACLE))
         {
-            movableGrid = targetGrid;
-            movableGrid.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Blue");
+            movableGrids.Add(movableKey, targetGrid);
+            if(distance == 1)
+            {
+                targetGrid.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Blue");
+            }
+            else if(distance == 2)
+            {
+                targetGrid.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Orange");
+            }
         }
     }
 
     private bool CheckMovableGrid(GridController grid)
     {
-        if(grid == movableLeft || grid == movableRight || grid == movableFront || grid == movableBack)
+        foreach (GridController movable in movableGrids.Values)
         {
-            return true;
+            if (grid == movable)
+            {
+                Debug.Log(movable.name);
+                return true;
+            }
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 }

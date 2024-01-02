@@ -10,7 +10,7 @@ public class ObjectManager : MonoBehaviour
     public void Start()
     {
         CheckMyType();
-        GetMyPosition(0);
+        Invoke("GetMyPosition", 1.5f);
     }
     public void CheckMyType()
     {
@@ -21,23 +21,19 @@ public class ObjectManager : MonoBehaviour
         }
 
     }
-    public void GetMyPosition(int type, Grid grid = null)
+    public void GetMyPosition()
     {
-        if (type == 0)
-        {
-            int x = (int)transform.position.x;
-            int z = (int)transform.position.z;
+        int x = (int)transform.position.x;
+        int z = (int)transform.position.z;
+        string key = $"{x}, {z}";
 
-            GridController[] grids = FindObjectsOfType<GridController>();
-            foreach (GridController gridController in grids)
-            {
-                if (gridController.x == x && gridController.z == z)
-                {
-                    myPosition = gridController;
-                    gridController.myObject = this;
-                }
-            }
+        GridController targetGrid = GridManager.Instance.gridDictionary[key];
+        if (myPosition != null)
+        {
+            myPosition.myObject = null;
         }
+        myPosition = targetGrid;
+        targetGrid.myObject = this;
     }
 }
 
