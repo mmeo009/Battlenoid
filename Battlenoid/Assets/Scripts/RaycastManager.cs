@@ -18,6 +18,9 @@ public class RaycastManager : MonoBehaviour
         }
         if(Input.GetMouseButtonDown(1))
         {
+            Vector3Int _playerPoint = Vector3Int.RoundToInt(playerPoint.transform.position);
+            Vector3Int _targetPoint = Vector3Int.RoundToInt(targetPoint.transform.position);
+            GridManager.Instance.PathFinding(_playerPoint, _targetPoint);
             PlayerMove(targetPoint);
         }
     }

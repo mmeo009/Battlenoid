@@ -32086,7 +32086,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c56c205f2dd5a4a8cfc3cd9f09f6f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gridManager: {fileID: 0}
   myPosition: {fileID: 0}
+  myPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1456597887
 GameObject:
   m_ObjectHideFlags: 0
@@ -40145,6 +40147,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d04a721b3c21ef54d9bf4d4f3b6bbaca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cubeX: {x: 0, y: 0, z: 0}
+  cubeY: {x: 0, y: 0, z: 0}
+  cubeZ: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
+  targetPos: {x: 0, y: 0, z: 0}
+  finalPath: []
+  mapSizeX: 0
+  mapSizeY: 0
+  mapSizeZ: 0
+  startCube:
+    ac: 0
+    dir: 0
+    x: 0
+    y: 0
+    z: 0
+    G: 0
+    H: 0
+  targetCube:
+    ac: 0
+    dir: 0
+    x: 0
+    y: 0
+    z: 0
+    G: 0
+    H: 0
+  curCube:
+    ac: 0
+    dir: 0
+    x: 0
+    y: 0
+    z: 0
+    G: 0
+    H: 0
+  open: []
+  closed: []
+  stage:
+    stageNum: 1
+    maxX: 20
+    maxY: 0
+    maxZ: 20
   grids:
   - {fileID: 625458220}
   - {fileID: 2079540445}

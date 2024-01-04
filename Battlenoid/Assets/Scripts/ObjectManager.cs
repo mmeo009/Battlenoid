@@ -4,16 +4,22 @@ using UnityEngine;
 
 public class ObjectManager : MonoBehaviour
 {
+    public GridManager gridManager;
     public GridController myPosition;
+    public Vector3Int myPos;
     public ObjectTypeData myData = new ObjectTypeData();
 
-    public void Start()
+    public void Update()
     {
-        CheckMyType();
-        Invoke("GetMyPosition", 1.5f);
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            CheckMyType();
+            Invoke("GetMyPosition", 1.5f);
+        }
     }
     public void CheckMyType()
     {
+        gridManager = GridManager.Instance;
         Component pc = GetComponent<PlayerController>();
         if(pc != null)
         {
@@ -23,11 +29,22 @@ public class ObjectManager : MonoBehaviour
     }
     public void GetMyPosition()
     {
-        int x = (int)transform.position.x;
-        int z = (int)transform.position.z;
-        string key = $"{x}, {z}";
+        myPos = Vector3Int.RoundToInt(transform.position);
+        if(myData.myType != ObjectTypeData.Type.DEFAULT)
+        {
+            if(myData.myType == ObjectTypeData.Type.PLAYER)
+            {
+                gridManager.cubeArray[myData.x, myData.z] = new CubeGrid(myPos.x, myPos.y - 2, myPos.z, false);
+            }
+            else
+            {
+                gridManager.cubeArray[myData.x, myData.z] = new CubeGrid(myPos.x, myPos.y, myPos.z, true);
+            }
+        }
 
-        GridController targetGrid = GridManager.Instance.gridDictionary[key];
+        string key = $"{myPos.x}, {myPos.z}";
+
+        GridController targetGrid = gridManager.gridDictionary[key];
         if (myPosition != null)
         {
             myPosition.myObject = null;
