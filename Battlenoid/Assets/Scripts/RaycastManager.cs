@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RaycastManager : MonoBehaviour
 {
-    public GridController targetPoint, playerPoint;
+    public Vector3Int targetPoint, playerPoint;
     public Dictionary<string, GridController> movableGrids = new Dictionary<string, GridController>();
 
     public PlayerController player;
@@ -17,11 +17,8 @@ public class RaycastManager : MonoBehaviour
             SendRayCast();
         }
         if(Input.GetMouseButtonDown(1))
-        {
-            Vector3Int _playerPoint = Vector3Int.RoundToInt(playerPoint.transform.position);
-            Vector3Int _targetPoint = Vector3Int.RoundToInt(targetPoint.transform.position);
-            GridManager.Instance.PathFinding(_playerPoint, _targetPoint);
-            PlayerMove(targetPoint);
+        {;
+            ObjectManager.Instance.PathFinding(playerPoint, targetPoint);
         }
     }
 
@@ -31,35 +28,22 @@ public class RaycastManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            var gridController = hit.transform.GetComponent<GridController>();
-            Debug.Log(hit.transform.gameObject.name);
+            Vector3Int _targetPoint = Vector3Int.RoundToInt(hit.transform.position);
+            Debug.Log(hit.transform.position);
 
-            if (player == null && gridController.myObject.myData.myType == ObjectTypeData.Type.PLAYER)
+            if (player == null && ObjectManager.Instance.cubeArray[_targetPoint.x, _targetPoint.z].mo == CubeGrid.myObject.player)
             {
-                playerPoint = gridController;
-                player = gridController.myObject.GetComponent<PlayerController>();
-                FindMovableGrids(gridController);
+                playerPoint = _targetPoint;
+                player = ObjectManager.Instance.objectDictionary[$"{_targetPoint.x},{_targetPoint.y},{_targetPoint.z}"].me.GetComponent<PlayerController>();
             }
-            else if (player != null && gridController.myObject == null)
+            else if (player != null && ObjectManager.Instance.cubeArray[_targetPoint.x, _targetPoint.z].mo == CubeGrid.myObject.none)
             {
-                if(CheckMovableGrid(gridController) == true)
-                {
-                    if (targetPoint != null)
-                    {
-                        targetPoint.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Blue");
-                    }
-                    targetPoint = gridController;
-                    targetPoint.GetComponent<MeshRenderer>().material = (Material)Resources.Load("Materials/Pink");
-                }
-                else
-                {
-                    Debug.Log("이동 불가 타일");
-                }
+                targetPoint = _targetPoint;
             }
         }
     }
 
-    public void PlayerMove(GridController grid)
+    /*public void PlayerMove(Vector3Int grid)
     {
         Vector3 destination = new Vector3(grid.x, 1.5f, grid.z);
         Debug.Log(destination);
@@ -142,5 +126,5 @@ public class RaycastManager : MonoBehaviour
         }
 
         return false;
-    }
+    }*/
 }
