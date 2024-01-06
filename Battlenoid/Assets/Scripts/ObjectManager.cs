@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [System.Serializable]
@@ -134,7 +135,30 @@ public class ObjectManager : MonoBehaviour
         }
         CreateObject(5, 1, 5, "Player");
     }
+    public async void MoveStart()
+    {
+        if (finalPath.Count < 5)
+        {
+            await MovePlayerAsync();
+        }
+    }
 
+    async Task MovePlayerAsync()
+    {
+        for (int i = 0; i < finalPath.Count; i++)
+        {
+            if (i == 0)
+            {
+                Vector3Int start = new Vector3Int(startCube.x, startCube.y, startCube.z);
+                await PlayerMoveAsync(start, finalPath[i]);
+            }
+            else
+            {
+                Vector3Int pos = new Vector3Int(finalPath[i - 1].x, finalPath[i - 1].y, finalPath[i - 1].z);
+                await PlayerMoveAsync(pos, finalPath[i]);
+            }
+        }
+    }
     public void PathFinding(Vector3Int startPos, Vector3Int targetPos)
     {
         startCube = cubeArray[startPos.x, startPos.z];
@@ -143,6 +167,8 @@ public class ObjectManager : MonoBehaviour
         open = new List<CubeGrid>() { startCube };
         closed = new List<CubeGrid>();
         finalPath = new List<CubeGrid>();
+        finalPath.Clear();
+        
 
         while (open.Count > 0)
         {
@@ -172,22 +198,7 @@ public class ObjectManager : MonoBehaviour
                 {
                     print(i + "번째는 " + finalPath[i].x + ", " + finalPath[i].z + ", 방향: " + finalPath[i].dir);
                 }
-
-                if(finalPath.Count < 5)
-                {
-                    for (int i = 0; i < finalPath.Count; i++)
-                    {
-                        if(i == 0)
-                        {
-                            PlayerMove(startPos, finalPath[i]);
-                        }
-                        else
-                        {
-                            Vector3Int pos = new Vector3Int(finalPath[i - 1].x, finalPath[i - 1].y, finalPath[i - 1].z);
-                            PlayerMove(pos, finalPath[i]);
-                        }
-                    }
-                }
+                MoveStart();
                 return;
             }
 
@@ -262,18 +273,18 @@ public class ObjectManager : MonoBehaviour
         }
     }
 
-    public void PlayerMove(Vector3Int startPos, CubeGrid targetGrid)
+    async Task PlayerMoveAsync(Vector3Int startPos, CubeGrid targetGrid)
     {
         int angle = 0;
-        if(targetGrid.dir == CubeGrid.direction.left)
+        if (targetGrid.dir == CubeGrid.direction.left)
         {
             angle = 270;
         }
-        else if(targetGrid.dir == CubeGrid.direction.back)
+        else if (targetGrid.dir == CubeGrid.direction.back)
         {
             angle = 180;
         }
-        else if(targetGrid.dir == CubeGrid.direction.right)
+        else if (targetGrid.dir == CubeGrid.direction.right)
         {
             angle = 90;
         }

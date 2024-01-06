@@ -38,7 +38,6 @@ public class RaycastManager : MonoBehaviour
             CubeGrid cube = objectManager.cubeArray[_targetPoint.x, _targetPoint.z];
             if (player == null && cube.mo == CubeGrid.myObject.player)
             {
-
                 playerPoint = _targetPoint;
                 player = objectManager.objectDictionary[$"{_targetPoint.x},{_targetPoint.y + 1},{_targetPoint.z}"].me.GetComponent<PlayerController>();
             }
