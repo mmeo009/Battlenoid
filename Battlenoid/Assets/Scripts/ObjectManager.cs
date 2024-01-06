@@ -114,7 +114,6 @@ public class ObjectManager : MonoBehaviour
     }
     private void Start()
     {
-        SetData();
         CreatMap();
     }
 
@@ -172,6 +171,22 @@ public class ObjectManager : MonoBehaviour
                 for (int i = 0; i < finalPath.Count; i++)
                 {
                     print(i + "번째는 " + finalPath[i].x + ", " + finalPath[i].z + ", 방향: " + finalPath[i].dir);
+                }
+
+                if(finalPath.Count < 5)
+                {
+                    for (int i = 0; i < finalPath.Count; i++)
+                    {
+                        if(i == 0)
+                        {
+                            PlayerMove(startPos, finalPath[i]);
+                        }
+                        else
+                        {
+                            Vector3Int pos = new Vector3Int(finalPath[i - 1].x, finalPath[i - 1].y, finalPath[i - 1].z);
+                            PlayerMove(pos, finalPath[i]);
+                        }
+                    }
                 }
                 return;
             }
@@ -241,24 +256,68 @@ public class ObjectManager : MonoBehaviour
             Debug.Log(_type);
             if(_type == ObjectData.Type.PLAYER)
             {
-                cubeArray[_x, _y].mo = CubeGrid.myObject.player;
-                Debug.Log(cubeArray[_x, _y].mo);
+                cubeArray[_x, _z].mo = CubeGrid.myObject.player;
+                Debug.Log(cubeArray[_x, _z].mo);
             }
-        }
-    } 
-
-
-
-    public GridController[] grids;
-    public Dictionary<string, GridController> gridDictionary = new Dictionary<string, GridController>();
-
-    public void SetData()
-    {
-        foreach (GridController _grid in grids)
-        {
-            string pos = $"{_grid.x}, {_grid.z}";
-            gridDictionary.Add(pos, _grid);
         }
     }
 
+    public void PlayerMove(Vector3Int startPos, CubeGrid targetGrid)
+    {
+        int angle = 0;
+        if(targetGrid.dir == CubeGrid.direction.left)
+        {
+            angle = 270;
+        }
+        else if(targetGrid.dir == CubeGrid.direction.back)
+        {
+            angle = 180;
+        }
+        else if(targetGrid.dir == CubeGrid.direction.right)
+        {
+            angle = 90;
+        }
+        StartCoroutine(MoveToDestination(startPos, targetGrid, 5.0f, 0.01f, angle));
+    }
+
+    private IEnumerator MoveToDestination(Vector3 playerPos, CubeGrid targetGrid, float speed, float stoppingDistance, int angle)
+    {
+        ObjectData playerData = objectDictionary[$"{playerPos.x},{playerPos.y + 1},{playerPos.z}"];
+
+        GameObject player = playerData.me;
+        Vector3 destination = new Vector3(targetGrid.x, targetGrid.y + 1, targetGrid.z);
+
+        Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
+
+        bool rotationComplete = false;
+
+        playerData.x = targetGrid.x;
+        playerData.y = targetGrid.y + 1;
+        playerData.z = targetGrid.z;
+        objectDictionary.Remove($"{playerPos.x},{playerPos.y + 1},{playerPos.z}");
+        objectDictionary.Add($"{targetGrid.x},{targetGrid.y + 1},{targetGrid.z}", playerData);
+
+        while (Vector3.Distance(player.transform.position, destination) > stoppingDistance || !rotationComplete)
+        {
+            if (!rotationComplete)
+            {
+                player.transform.rotation = Quaternion.Lerp(player.transform.rotation, targetRotation, speed * Time.deltaTime);
+
+                if (Quaternion.Angle(player.transform.rotation, targetRotation) < 1.0f)
+                {
+                    rotationComplete = true;
+                }
+            }
+            else
+            {
+                float step = speed * Time.deltaTime;
+                player.transform.position = Vector3.Lerp(player.transform.position, destination, step);
+            }
+
+            yield return null;
+        }
+        player.transform.position = destination;
+        player.transform.rotation = targetRotation;
+
+    }
 }
