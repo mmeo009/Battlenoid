@@ -133,6 +133,7 @@ public class ObjectManager : MonoBehaviour
                 CreateObject(i, 0, j, $"Stage_{stage.stageNum}_Cube");
             }
         }
+        CreateObject(5, 1, 5, "Player");
     }
 
     public void PathFinding(Vector3Int startPos, Vector3Int targetPos)
@@ -229,8 +230,22 @@ public class ObjectManager : MonoBehaviour
         ObjectData objectData = new ObjectData(_x, _y, _z, _type, temp);
 
         objectDictionary.Add($"{_x},{_y},{_z}", objectData);
-
+        FindObjectsCube(_x, _y, _z, objectId);
     }
+
+    public void FindObjectsCube(int _x, int _y, int _z , string objectId)
+    {
+        if(!objectId.Contains("Cube"))
+        {
+            ObjectData.Type _type = objectDictionary[$"{_x},{_y},{_z}"].myType;
+            Debug.Log(_type);
+            if(_type == ObjectData.Type.PLAYER)
+            {
+                cubeArray[_x, _y].mo = CubeGrid.myObject.player;
+                Debug.Log(cubeArray[_x, _y].mo);
+            }
+        }
+    } 
 
 
 
@@ -247,4 +262,3 @@ public class ObjectManager : MonoBehaviour
     }
 
 }
-

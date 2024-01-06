@@ -29,12 +29,12 @@ public class RaycastManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             Vector3Int _targetPoint = Vector3Int.RoundToInt(hit.transform.position);
-            Debug.Log(hit.transform.position);
+            Debug.Log(_targetPoint);
 
             if (player == null && ObjectManager.Instance.cubeArray[_targetPoint.x, _targetPoint.z].mo == CubeGrid.myObject.player)
             {
                 playerPoint = _targetPoint;
-                player = ObjectManager.Instance.objectDictionary[$"{_targetPoint.x},{_targetPoint.y},{_targetPoint.z}"].me.GetComponent<PlayerController>();
+                player = ObjectManager.Instance.objectDictionary[$"{_targetPoint.x},{_targetPoint.y + 1},{_targetPoint.z}"].me.GetComponent<PlayerController>();
             }
             else if (player != null && ObjectManager.Instance.cubeArray[_targetPoint.x, _targetPoint.z].mo == CubeGrid.myObject.none)
             {
