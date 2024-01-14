@@ -531,7 +531,7 @@ MonoBehaviour:
   closed: []
   stage:
     stageNum: 1
-    maxX: 20
+    maxX: 15
     maxY: 0
     maxZ: 20
 --- !u!1660057539 &9223372036854775807

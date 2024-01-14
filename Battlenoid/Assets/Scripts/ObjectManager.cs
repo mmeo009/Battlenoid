@@ -80,6 +80,7 @@ public class ObjectData
 
     public int x, y, z;
     public Type myType = Type.DEFAULT;
+    public PlayerController player;
 
     public UnityEngine.GameObject me;
 }
@@ -95,7 +96,7 @@ public class ObjectManager : MonoBehaviour
     public CubeGrid startCube, targetCube, curCube;
     public List<CubeGrid> open, closed;
 
-    public Stage stage = new Stage(1, 20, 0, 20);
+    public Stage stage = new Stage(1, 15, 0, 20);
 
     public static ObjectManager Instance { get; private set; }
 
@@ -133,11 +134,11 @@ public class ObjectManager : MonoBehaviour
                 CreateObject(i, 0, j, $"Stage_{stage.stageNum}_Cube");
             }
         }
-        CreateObject(5, 1, 5, "Player");
+        CreateObject(0, 1, 0, "Player");
     }
     public async void MoveStart()
     {
-        if (finalPath.Count < 5)
+        if (finalPath.Count < 8)
         {
             await MovePlayerAsync();
         }
