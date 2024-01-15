@@ -136,30 +136,7 @@ public class ObjectManager : MonoBehaviour
         }
         CreateObject(0, 1, 0, "Player");
     }
-    public async void MoveStart()
-    {
-        if (finalPath.Count < 8)
-        {
-            await MovePlayerAsync();
-        }
-    }
 
-    async Task MovePlayerAsync()
-    {
-        for (int i = 0; i < finalPath.Count; i++)
-        {
-            if (i == 0)
-            {
-                Vector3Int start = new Vector3Int(startCube.x, startCube.y, startCube.z);
-                await PlayerMoveAsync(start, finalPath[i]);
-            }
-            else
-            {
-                Vector3Int pos = new Vector3Int(finalPath[i - 1].x, finalPath[i - 1].y, finalPath[i - 1].z);
-                await PlayerMoveAsync(pos, finalPath[i]);
-            }
-        }
-    }
     public void PathFinding(Vector3Int startPos, Vector3Int targetPos)
     {
         startCube = cubeArray[startPos.x, startPos.z];
@@ -273,8 +250,26 @@ public class ObjectManager : MonoBehaviour
             }
         }
     }
-
-    async Task PlayerMoveAsync(Vector3Int startPos, CubeGrid targetGrid)
+    public void MoveStart()
+    {
+        if (finalPath.Count < 3)
+        {
+            for (int i = 0; i < finalPath.Count; i++)
+            {
+                if (i == 0)
+                {
+                    Vector3Int start = new Vector3Int(startCube.x, startCube.y, startCube.z);
+                    PlayerMove(start, finalPath[i]);
+                }
+                else
+                {
+                    Vector3Int pos = new Vector3Int(finalPath[i - 1].x, finalPath[i - 1].y, finalPath[i - 1].z);
+                    PlayerMove(pos, finalPath[i]);
+                }
+            }
+        }
+    }
+    public void PlayerMove(Vector3Int startPos, CubeGrid targetGrid)
     {
         int angle = 0;
         if (targetGrid.dir == CubeGrid.direction.left)
@@ -306,8 +301,11 @@ public class ObjectManager : MonoBehaviour
         playerData.x = targetGrid.x;
         playerData.y = targetGrid.y + 1;
         playerData.z = targetGrid.z;
-        objectDictionary.Remove($"{playerPos.x},{playerPos.y + 1},{playerPos.z}");
+        cubeArray[(int)playerPos.x, (int)playerPos.z].mo = CubeGrid.myObject.none;
+        cubeArray[(int)targetGrid.x, (int)targetGrid.z].mo = CubeGrid.myObject.player;
         objectDictionary.Add($"{targetGrid.x},{targetGrid.y + 1},{targetGrid.z}", playerData);
+        objectDictionary[$"{playerPos.x},{playerPos.y},{playerPos.z}"].player = null;
+        objectDictionary.Remove($"{playerPos.x},{playerPos.y + 1},{playerPos.z}");
 
         while (Vector3.Distance(player.transform.position, destination) > stoppingDistance || !rotationComplete)
         {
