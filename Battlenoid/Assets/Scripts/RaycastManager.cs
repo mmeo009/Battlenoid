@@ -7,6 +7,13 @@ public class RaycastManager : MonoBehaviour
     public Vector3Int targetPoint, playerPoint;
     public ObjectManager objectManager;
     public PlayerController player;
+    public enum Mode
+    {
+        Move,
+        Attack,
+        None
+    }
+    public Mode playerMode = Mode.None;
     public int x, y, z;
 
     private void Start()
@@ -21,8 +28,26 @@ public class RaycastManager : MonoBehaviour
         }
         if(Input.GetMouseButtonDown(1))
         {
-            objectManager.PathFinding(playerPoint, targetPoint);
+            if(playerMode == Mode.Move)
+            {
+                objectManager.PathFinding(playerPoint, targetPoint);
+            }
+            else if(playerMode == Mode.Attack)
+            {
+
+            }
             player = null;
+        }
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            if (playerMode == Mode.None || playerMode == Mode.Attack)
+            {
+                playerMode = Mode.Move;
+            }
+            else if( playerMode == Mode.Move)
+            {
+                playerMode = Mode.Attack;
+            }
         }
     }
 
