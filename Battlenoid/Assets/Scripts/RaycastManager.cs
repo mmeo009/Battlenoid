@@ -5,6 +5,7 @@ using UnityEngine;
 public class RaycastManager : MonoBehaviour
 {
     public Vector3Int targetPoint, playerPoint;
+    MeshRenderer targetMesh;
     public ObjectManager objectManager;
     public PlayerController player;
     public enum Mode
@@ -36,6 +37,7 @@ public class RaycastManager : MonoBehaviour
             {
 
             }
+            targetMesh.materials[0] = (Material)Resources.Load("Materials/New Material");
             player = null;
         }
         if(Input.GetKeyDown(KeyCode.A))
@@ -69,6 +71,13 @@ public class RaycastManager : MonoBehaviour
             else if (player != null && objectManager.cubeArray[_targetPoint.x, _targetPoint.z].mo == CubeGrid.myObject.none)
             {
                 targetPoint = _targetPoint;
+                targetMesh = objectManager.objectDictionary[$"{_targetPoint.x},{_targetPoint.y},{_targetPoint.z}"].me.GetComponent<MeshRenderer>();
+                Debug.Log(targetMesh.gameObject);
+                Debug.Log(targetMesh.materials[0].name);
+                Material _cube = (Material)Resources.Load("Shader/VFX/Emphasis/Cube");
+                Debug.Log(_cube.name);
+                targetMesh.materials[0] = _cube;
+                Debug.Log(targetMesh.materials[0].name);
             }
         }
     }
