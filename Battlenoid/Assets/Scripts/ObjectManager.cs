@@ -71,11 +71,11 @@ public class ObjectData
     public ObjectData(int _x, int _y, int _z, Type _type, GameObject _me) { x = _x; y = _y; z = _z; myType = _type; me = _me; }
     public enum Type
     {
+        DEFAULT,
         OBSTACLE,
         PLAYER,
         BOUNDARY,
         CUBEGRID,
-        DEFAULT
     }
 
     public int x, y, z;
